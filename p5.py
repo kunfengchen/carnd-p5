@@ -43,6 +43,7 @@ def detect_vehicles_image(input_img,
     img_height = img.shape[0]
     y_start_stop=[img_height/2, img_height]
 
+
     window_list = slide_window(
         img, xy_window=xy_window, y_start_stop=y_start_stop)
     if view:
