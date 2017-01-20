@@ -10,3 +10,6 @@ From Udacity:
 
 From Origianl  KITTI vision benchmark suite:
  * [GTI vehicle image database](http://www.gti.ssr.upm.es/data/Vehicle_database.html)
+ 
+Udacity's own data:
+ * [annotations](https://github.com/udacity/self-driving-car/tree/master/annotations)
