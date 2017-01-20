@@ -12,14 +12,21 @@ from skimage.feature import hog
 from sklearn.model_selection import train_test_split
 from sklearn.externals import joblib
 
+from exercise.sliding_window import slide_window
 
-# load the scaler
-scaler_file_name = "x_scaler.pkl"
-scaler_load = joblib.load(scaler_file_name)
 
-# load the classifier model
-model_file_name = "linearSVC_model.pkl"
-svc_load = joblib.load(model_file_name)
+def load_scaler():
+    # load the scaler
+    scaler_file_name = "x_scaler.pkl"
+    scaler_load = joblib.load(scaler_file_name)
+    return scaler_load
+
+
+def load_classifier_model():
+    # load the classifier model
+    model_file_name = "linearSVC_model.pkl"
+    svc_load = joblib.load(model_file_name)
+    return svc_load
 
 
 def detect_vehicles_image_name(img_name):
@@ -27,8 +34,26 @@ def detect_vehicles_image_name(img_name):
     return detect_vehicles_image(img)
 
 
-def detect_vehicles_image(img):
-    pass
+def detect_vehicles_image(input_img,
+                          scaler=load_scaler(),
+                          classifier=load_classifier_model(),
+                          view=True):
+    img = np.copy(input_img)
+    xy_window=(64, 64)
+    img_height = img.shape[0]
+    y_start_stop=[img_height/2, img_height]
+
+    window_list = slide_window(
+        img, xy_window=xy_window, y_start_stop=y_start_stop)
+    if view:
+        for i, window in enumerate(window_list):
+            if i < xy_window[0]*xy_window[1]:
+                (startx,starty), (endx, endy)= window
+                plt.subplot(xy_window[0], xy_window[1], i+1, xticks=[], yticks=[])
+                plt.imshow(img[startx:endx, starty:endy, :])
+        plt.show()
+
+    return img
 
 
 def detect_vehicles_video(video_name):
@@ -43,8 +68,7 @@ if __name__ == '__main__':
         help='Train the classifier')
     parser.add_argument(
         '--image',
-        #default="test_images/test6.jpg",
-        #default="v1frames/frame1050.jpg",
+        default="test/frame981.jpg",
         help='image to be processed')
     parser.add_argument(
         '--video',
