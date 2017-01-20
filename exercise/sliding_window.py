@@ -66,5 +66,8 @@ windows = slide_window(image, x_start_stop=[None, None], y_start_stop=[None, Non
                        xy_window=(128, 128), xy_overlap=(0.5, 0.5))
 
 window_img = draw_boxes(image, windows, color=(0, 0, 255), thick=6)
-plt.imshow(window_img)
+#plt.imshow(window_img)
+box = windows[22]
+(startx,starty), (endx, endy)= box
+plt.imshow(window_img[startx:endx, starty:endy, :])
 plt.show()
