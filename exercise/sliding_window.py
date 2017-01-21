@@ -18,6 +18,21 @@ def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
     return imcopy
 
 
+def show_grid_view(img, bboxes, xy_nums=(8, 7)):
+    """
+    Plot each sub window images
+    :param img: the whole image
+    :param bboxes: the sub window box
+    :param xy_nums: x,y size of grid display
+    :return:
+    """
+    for i, box in enumerate(bboxes, start=1):
+        (startx,starty), (endx, endy)= box
+        plt.subplot(xy_nums[0], xy_nums[1], i, xticks=[], yticks=[])
+        plt.imshow(img[starty:endy, startx:endx, :])
+    plt.show()
+
+
 # Define a function that takes an image,
 # start and stop positions in both x and y,
 # window size (x and y dimensions),
@@ -63,14 +78,11 @@ def slide_window(img, x_start_stop=[None, None], y_start_stop=[None, None],
 
 if __name__ == '__main__':
     #image = mpimg.imread('bbox-example-image.jpg')
-    image = mpimg.imread('frame0.jpg')
+    image = mpimg.imread('../test/frame350.jpg')
 
     windows = slide_window(image, x_start_stop=[None, None], y_start_stop=[None, None],
                            xy_window=(128, 128), xy_overlap=(0.5, 0.5))
-
     window_img = draw_boxes(image, windows, color=(0, 0, 255), thick=6)
-    #plt.imshow(window_img)
-    box = windows[22]
-    (startx,starty), (endx, endy)= box
-    plt.imshow(window_img[startx:endx, starty:endy, :])
+    plt.imshow(window_img)
     plt.show()
+    show_grid_view(image, windows, xy_nums=(10,19))

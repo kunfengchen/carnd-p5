@@ -12,7 +12,8 @@ from skimage.feature import hog
 from sklearn.model_selection import train_test_split
 from sklearn.externals import joblib
 
-from exercise.sliding_window import slide_window
+from exercise.sliding_window import \
+    slide_window, draw_boxes, show_grid_view
 
 
 def load_scaler():
@@ -29,6 +30,21 @@ def load_classifier_model():
     return svc_load
 
 
+def predit_vehicles(img, windows,
+                   scaler = load_scaler(),
+                   classifier = load_classifier()):
+    """
+    Predict if image in sliding windows is a car
+    :param img: the image to look for
+    :param windows: list of sub windows
+    :param scaler: scale the sub windows image features
+    :param classifier: classify a car or not
+    :return: list of sub windows classified as car
+    """
+    car_feature_list = []
+    return windows[classifier.predit(car_feature_list)]
+
+
 def detect_vehicles_image_name(img_name):
     img = mpimg.imread(img_name)
     return detect_vehicles_image(img)
@@ -39,20 +55,23 @@ def detect_vehicles_image(input_img,
                           classifier=load_classifier_model(),
                           view=True):
     img = np.copy(input_img)
-    xy_window=(64, 64)
-    img_height = img.shape[0]
-    y_start_stop=[img_height/2, img_height]
+    # diffent sliding window sizes
+    xy_windows=[(100, 100), (140, 140), (180, 180)]
+    for xy_window in xy_windows:
+        img_height = img.shape[0]
+        img_width  = img.shape[1]
+        view_height = int(img_height/2)
+        y_start_stop=[view_height, img_height]
+        xy_nums = (int(view_height/xy_window[1])*2,
+                   int(img_width/xy_window[0])*2)
 
-
-    window_list = slide_window(
-        img, xy_window=xy_window, y_start_stop=y_start_stop)
-    if view:
-        for i, window in enumerate(window_list):
-            if i < xy_window[0]*xy_window[1]:
-                (startx,starty), (endx, endy)= window
-                plt.subplot(xy_window[0], xy_window[1], i+1, xticks=[], yticks=[])
-                plt.imshow(img[startx:endx, starty:endy, :])
-        plt.show()
+        window_list = slide_window(
+            img, xy_window=xy_window, y_start_stop=y_start_stop)
+        if view:
+            show_grid_view(img, window_list, xy_nums=xy_nums)
+        cars_window_list = predit_vehicles(
+            img, window_list,
+            scaler=scaler, classifier=classifier)
 
     return img
 
