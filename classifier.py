@@ -101,70 +101,72 @@ def get_image_names(glob_string):
         image_names.append(image)
     return image_names
 
-car_image_glob_string = 'data/vehicles/*/*.png'
-cars = get_image_names(car_image_glob_string)
-notcars_image_glob_string = 'data/non-vehicles/*/*.png'
-notcars = get_image_names(notcars_image_glob_string)
+
+if __name__ == '__main__':
+    car_image_glob_string = 'data/vehicles/*/*.png'
+    cars = get_image_names(car_image_glob_string)
+    notcars_image_glob_string = 'data/non-vehicles/*/*.png'
+    notcars = get_image_names(notcars_image_glob_string)
 
 
-orient = 9
-pix_per_cell = 8
-cell_per_block = 2
+    orient = 9
+    pix_per_cell = 8
+    cell_per_block = 2
 
 
-car_features = extract_features(cars, cspace='RGB', spatial_size=(32, 32),
-                                hist_bins=32, hist_range=(0, 256))
-notcar_features = extract_features(notcars, cspace='RGB', spatial_size=(32, 32),
-                                   hist_bins=32, hist_range=(0, 256))
+    car_features = extract_features(cars, cspace='RGB', spatial_size=(32, 32),
+                                    hist_bins=32, hist_range=(0, 256))
+    notcar_features = extract_features(notcars, cspace='RGB', spatial_size=(32, 32),
+                                       hist_bins=32, hist_range=(0, 256))
 
-# Create an array stack of feature vectors
-X = np.vstack((car_features, notcar_features)).astype(np.float64)
-# Fit a per-column scaler
-X_scaler = StandardScaler().fit(X)
+    # Create an array stack of feature vectors
+    X = np.vstack((car_features, notcar_features)).astype(np.float64)
+    # Fit a per-column scaler
+    X_scaler = StandardScaler().fit(X)
 
-# Save the scaler
-scaler_file_name = "x_scaler.pkl"
-joblib.dump(X_scaler, scaler_file_name)
-print("X_scaler saved to:", scaler_file_name)
+    # Save the scaler
+    scaler_file_name = "x_scaler.pkl"
+    joblib.dump(X_scaler, scaler_file_name)
+    print("X_scaler saved to:", scaler_file_name)
 
-# Reload the scaler
-scaler_load = joblib.load(scaler_file_name)
+    # Reload the scaler
+    scaler_load = joblib.load(scaler_file_name)
 
-# Apply the scaler to X
-#scaled_X = X_scaler.transform(X)
-scaled_X = scaler_load.transform(X)
+    # Apply the scaler to X
+    #scaled_X = X_scaler.transform(X)
+    scaled_X = scaler_load.transform(X)
 
-# Define the labels vector
-y = np.hstack((np.ones(len(car_features)), np.zeros(len(notcar_features))))
+    # Define the labels vector
+    y = np.hstack((np.ones(len(car_features)), np.zeros(len(notcar_features))))
 
 
-# Split up data into randomized training and test sets
-rand_state = np.random.randint(0, 100)
-X_train, X_test, y_train, y_test = train_test_split(
-    scaled_X, y, test_size=0.2, random_state=rand_state)
+    # Split up data into randomized training and test sets
+    rand_state = np.random.randint(0, 100)
+    X_train, X_test, y_train, y_test = train_test_split(
+        scaled_X, y, test_size=0.2, random_state=rand_state)
 
-# Use a linear SVC
-svc = LinearSVC()
-# Check the training time for the SVC
-t=time.time()
-print("Training LinearSVC")
-svc.fit(X_train, y_train)
-t2 = time.time()
-print(t2-t, 'Seconds to train SVC...')
-# Check the score of the SVC
-print('Train Accuracy of SVC = ', svc.score(X_train, y_train))
-print('Test Accuracy of SVC = ', svc.score(X_test, y_test))
+    # Use a linear SVC
+    svc = LinearSVC()
+    # Check the training time for the SVC
+    t=time.time()
+    print("Training LinearSVC")
+    svc.fit(X_train, y_train)
+    t2 = time.time()
+    print(t2-t, 'Seconds to train SVC...')
+    # Check the score of the SVC
+    print('Train Accuracy of SVC = ', svc.score(X_train, y_train))
+    print('Test Accuracy of SVC = ', svc.score(X_test, y_test))
 
-# Save the model
-model_file_name = "linearSVC_model.pkl"
-joblib.dump(svc, model_file_name)
-print("classified model saved to:", model_file_name)
+    # Save the model
+    model_file_name = "linearSVC_model.pkl"
+    joblib.dump(svc, model_file_name)
+    print("classified model saved to:", model_file_name)
 
-# Reload the model
-svc_load = joblib.load(model_file_name)
+    # Reload the model
+    svc_load = joblib.load(model_file_name)
 
-# Check the prediction time for a single sample
-t=time.time()
-prediction = svc_load.predict(X_test[0].reshape(1, -1))
-t2 = time.time()
-print(t2-t, 'Seconds to predict with SVC')
+    # Check the prediction time for a single sample
+    t=time.time()
+    prediction = svc_load.predict(X_test[0].reshape(1, -1))
+    t2 = time.time()
+    print(t2-t, 'Seconds to predict with SVC')

@@ -18,6 +18,17 @@ def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
     return imcopy
 
 
+def get_sub_image(img, window):
+    """
+    Get a small set of the image specified by the window
+    :param img: The whole image
+    :param window: the sub image region
+    :return: the sub image
+    """
+    (startx,starty), (endx, endy)= window
+    return img[starty:endy, startx:endx, :]
+
+
 def show_grid_view(img, bboxes, xy_nums=(8, 7)):
     """
     Plot each sub window images
@@ -29,7 +40,8 @@ def show_grid_view(img, bboxes, xy_nums=(8, 7)):
     for i, box in enumerate(bboxes, start=1):
         (startx,starty), (endx, endy)= box
         plt.subplot(xy_nums[0], xy_nums[1], i, xticks=[], yticks=[])
-        plt.imshow(img[starty:endy, startx:endx, :])
+        #plt.imshow(img[starty:endy, startx:endx, :])
+        plt.imshow(get_sub_image(img, box))
     plt.show()
 
 

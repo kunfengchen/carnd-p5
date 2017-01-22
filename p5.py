@@ -13,7 +13,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.externals import joblib
 
 from exercise.sliding_window import \
-    slide_window, draw_boxes, show_grid_view
+    slide_window, draw_boxes, show_grid_view, \
+    get_sub_image
+
+from classifier import extract_one_features
 
 
 def load_scaler():
@@ -30,9 +33,17 @@ def load_classifier_model():
     return svc_load
 
 
+def show_features(features_list, xy_nums=(20, 20)):
+     for i, features in enumerate(features_list, start=1):
+        plt.subplot(xy_nums[0], xy_nums[1], i, xticks=[], yticks=[])
+        plt.plot(features)
+     plt.show()
+
+
 def predit_vehicles(img, windows,
                    scaler = load_scaler(),
-                   classifier = load_classifier()):
+                   classifier = load_classifier_model(),
+                   view=True):
     """
     Predict if image in sliding windows is a car
     :param img: the image to look for
@@ -41,11 +52,33 @@ def predit_vehicles(img, windows,
     :param classifier: classify a car or not
     :return: list of sub windows classified as car
     """
-    car_feature_list = []
-    return windows[classifier.predit(car_feature_list)]
+    car_features_list = []
+    for window in windows:
+        sub_img = cv2.resize(
+            get_sub_image(img, window), (64, 64))
+        one_features = extract_one_features(
+            sub_img,
+            cspace='RGB', spatial_size=(32, 32),
+            hist_bins=32, hist_range=(0, 256)
+        )
+        car_features_list.append(
+           # scaler.transform(np.asarray(one_features, dtype=np.float64)))
+             one_features)
+        scaled_list = scaler.fit_transform(car_features_list)
+    if view:
+        show_features(scaled_list)
+    predicts = classifier.predict(scaled_list).astype(np.bool)
+    car_windows = []
+    for p, w in zip(predicts, windows):
+        if p:
+            car_windows.append(w)
+    return car_windows
 
 
-def detect_vehicles_image_name(img_name):
+def detect_vehicles_image_name(img_name,
+                               scaler=load_scaler(),
+                               classifier=load_classifier_model(),
+                               view=True):
     img = mpimg.imread(img_name)
     return detect_vehicles_image(img)
 
@@ -56,7 +89,9 @@ def detect_vehicles_image(input_img,
                           view=True):
     img = np.copy(input_img)
     # diffent sliding window sizes
-    xy_windows=[(100, 100), (140, 140), (180, 180)]
+    #xy_windows=[(100, 100), (140, 140), (180, 180)]
+    xy_windows=[(180, 180)]
+
     for xy_window in xy_windows:
         img_height = img.shape[0]
         img_width  = img.shape[1]
@@ -69,11 +104,15 @@ def detect_vehicles_image(input_img,
             img, xy_window=xy_window, y_start_stop=y_start_stop)
         if view:
             show_grid_view(img, window_list, xy_nums=xy_nums)
-        cars_window_list = predit_vehicles(
+        car_window_list = predit_vehicles(
             img, window_list,
             scaler=scaler, classifier=classifier)
+        if view:
+            window_img = draw_boxes(img, car_window_list, color=(0, 0, 255), thick=6)
+            plt.imshow(window_img)
+            plt.show()
 
-    return img
+    return window_img
 
 
 def detect_vehicles_video(video_name):
@@ -88,7 +127,8 @@ if __name__ == '__main__':
         help='Train the classifier')
     parser.add_argument(
         '--image',
-        default="test/frame981.jpg",
+        #default="test/frame981.jpg",
+        default="test/frame350.jpg",
         help='image to be processed')
     parser.add_argument(
         '--video',
@@ -104,7 +144,11 @@ if __name__ == '__main__':
     if args.train:
         pass
     if args.image is not None:
-        detect_vehicles_image_name(args.image)
+        detect_vehicles_image_name(
+            args.image,
+            classifier=load_classifier_model(),
+            #scaler=load_scaler())
+            scaler=StandardScaler())
         exit()
     if args.video is not None:
         detect_vehicles_video(args.video)
