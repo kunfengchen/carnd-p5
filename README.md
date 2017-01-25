@@ -1,19 +1,6 @@
 # carnd-p5
 Vehicle Detection and Tracking
 
-### File not included and needed download
-From Udacity: 
- * [vehicles_smallset.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/vehicles_smallset.zip)
- * [non-vehicles_smallset.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/non-vehicles_smallset.zip)
- * [vehicles.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/vehicles.zip)
- * [non_vehicles.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/non-vehicles.zip)
-
-From Origianl  KITTI vision benchmark suite:
- * [GTI vehicle image database](http://www.gti.ssr.upm.es/data/Vehicle_database.html)
- 
-Udacity's own data:
- * [annotations](https://github.com/udacity/self-driving-car/tree/master/annotations)
-
 
 ---
 
@@ -36,6 +23,22 @@ The goals / steps of this project are the following:
 [image5]: ./examples/img50.jpg
 [image6]: ./examples/example_output.jpg
 [video1]: ./project_video.mp4
+
+---
+### File not included and needed download
+From Udacity: 
+ * [vehicles_smallset.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/vehicles_smallset.zip)
+ * [non-vehicles_smallset.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/non-vehicles_smallset.zip)
+ * [vehicles.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/vehicles.zip)
+ * [non_vehicles.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/non-vehicles.zip)
+
+From Origianl  KITTI vision benchmark suite:
+ * [GTI vehicle image database](http://www.gti.ssr.upm.es/data/Vehicle_database.html)
+ 
+Udacity's own data:
+ * [annotations](https://github.com/udacity/self-driving-car/tree/master/annotations)
+
+---
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
 ###Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
