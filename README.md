@@ -1,6 +1,4 @@
-# carnd-p5
-Vehicle Detection and Tracking
-
+# Carnd-p5: Vehicle Detection and Tracking
 
 ---
 
@@ -46,15 +44,14 @@ Udacity's own data:
 ---
 ###Writeup / README
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Vehicle-Detection/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
-
+####1. Provide a Writeup / README  
 You're reading it!
 
 ###Histogram of Oriented Gradients (HOG)
 
 ####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in the first code cell of the IPython notebook (or in lines # through # of the file called `some_file.py`).  
+The code for this step is contained in get_hog_features() cell of [classifier.py](classifier.py)  
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
