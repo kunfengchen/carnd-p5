@@ -1,7 +1,6 @@
 # Ported from class material
 
-import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
+import scipy.misc
 import numpy as np
 import cv2
 import glob
@@ -11,6 +10,17 @@ from sklearn.preprocessing import StandardScaler
 from skimage.feature import hog
 from sklearn.model_selection import train_test_split
 from sklearn.externals import joblib
+
+
+CLASSIFIER_IMG_SIZE = (64, 64) # Image size for training and detecting
+MODEL_FIEL_NAME = "linearSVC_model.pkl"
+SCALER_FILE_NAME = "x_scaler.pkl"
+
+PIX_PER_CELL= 2  # Default pixels per cell for hog function
+CELLs_PER_BLOCK = 8  # Default cells per block for hog function
+ORIENTS_HOG = 9  # Default orientations for hog function
+HOG_CHANNEL = 0  # Default color channel for hog function
+
 
 # Define a function to compute binned color features
 def bin_spatial(img, size=(32, 32)):
@@ -82,7 +92,7 @@ def extract_features(imgs, cspace='RGB', spatial_size=(32, 32),
     # Iterate through the list of images
     for file in imgs:
         # Read in each one by one
-        image = mpimg.imread(file)
+        image = scipy.misc.imread(file)
         # Append the new feature vector to the features list
         one_features = extract_one_features(
            image, cspace=cspace, spatial_size=spatial_size,
@@ -102,22 +112,23 @@ def get_image_names(glob_string):
     return image_names
 
 
-if __name__ == '__main__':
+def train():
     car_image_glob_string = 'data/vehicles/*/*.png'
     cars = get_image_names(car_image_glob_string)
     notcars_image_glob_string = 'data/non-vehicles/*/*.png'
     notcars = get_image_names(notcars_image_glob_string)
 
-
-    orient = 9
-    pix_per_cell = 8
-    cell_per_block = 2
-
-
     car_features = extract_features(cars, cspace='RGB', spatial_size=(32, 32),
-                                    hist_bins=32, hist_range=(0, 256))
+                                    hist_bins=32, hist_range=(0, 256),
+                                    orient=ORIENTS_HOG, pix_per_cell=PIX_PER_CELL,
+                                    cell_per_block=CELLs_PER_BLOCK,
+                                    hog_channel=HOG_CHANNEL)
     notcar_features = extract_features(notcars, cspace='RGB', spatial_size=(32, 32),
-                                       hist_bins=32, hist_range=(0, 256))
+                                       hist_bins=32, hist_range=(0, 256),
+                                       orient=ORIENTS_HOG, pix_per_cell=PIX_PER_CELL,
+                                       cell_per_block=CELLs_PER_BLOCK,
+                                       hog_channel=HOG_CHANNEL)
+
 
     # Create an array stack of feature vectors
     X = np.vstack((car_features, notcar_features)).astype(np.float64)
@@ -125,12 +136,11 @@ if __name__ == '__main__':
     X_scaler = StandardScaler().fit(X)
 
     # Save the scaler
-    scaler_file_name = "x_scaler.pkl"
-    joblib.dump(X_scaler, scaler_file_name)
-    print("X_scaler saved to:", scaler_file_name)
+    joblib.dump(X_scaler, SCALER_FILE_NAME)
+    print("X_scaler saved to:", SCALER_FILE_NAME)
 
     # Reload the scaler
-    scaler_load = joblib.load(scaler_file_name)
+    scaler_load = joblib.load(SCALER_FILE_NAME)
 
     # Apply the scaler to X
     #scaled_X = X_scaler.transform(X)
@@ -158,15 +168,23 @@ if __name__ == '__main__':
     print('Test Accuracy of SVC = ', svc.score(X_test, y_test))
 
     # Save the model
-    model_file_name = "linearSVC_model.pkl"
-    joblib.dump(svc, model_file_name)
-    print("classified model saved to:", model_file_name)
+    joblib.dump(svc, MODEL_FIEL_NAME)
+    print("classified model saved to:", MODEL_FIEL_NAME)
 
     # Reload the model
-    svc_load = joblib.load(model_file_name)
+    svc_load = joblib.load(MODEL_FIEL_NAME)
+
+    # Check the score of the SVC for reloading
+    print('Train Accuracy of SVC after reload = ', svc_load.score(X_train, y_train))
+    print('Test Accuracy of SVC after reload = ', svc_load.score(X_test, y_test))
+
 
     # Check the prediction time for a single sample
     t=time.time()
     prediction = svc_load.predict(X_test[0].reshape(1, -1))
     t2 = time.time()
     print(t2-t, 'Seconds to predict with SVC')
+
+
+if __name__ == '__main__':
+    train()

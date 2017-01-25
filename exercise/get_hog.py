@@ -9,7 +9,8 @@ from skimage.feature import hog
 #from skimage import color, exposure
 # images are divided up into vehicles and non-vehicles
 
-images = glob.glob('*.jpg')
+#images = glob.glob('*.jpg')
+images = glob.glob('w06.png')
 cars = []
 notcars = []
 
@@ -40,9 +41,12 @@ image = mpimg.imread(cars[ind])
 
 gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 # Define HOG parameters
+#orient = 9
+#pix_per_cell = 8
+#cell_per_block = 2
 orient = 9
-pix_per_cell = 8
-cell_per_block = 2
+pix_per_cell = 2
+cell_per_block = 8
 # Call our function with vis=True to see an image output
 features, hog_image = get_hog_features(gray, orient,
                                        pix_per_cell, cell_per_block,

@@ -3,8 +3,9 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+import scipy.misc
 
+SAVE_PATH = 'data/saved/'
 
 # Here is your draw_boxes function from the previous exercise
 def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
@@ -43,6 +44,23 @@ def show_grid_view(img, bboxes, xy_nums=(8, 7)):
         #plt.imshow(img[starty:endy, startx:endx, :])
         plt.imshow(get_sub_image(img, box))
     plt.show()
+
+
+def save_sub_images(
+        img, windows, size=(64, 64),
+        path=SAVE_PATH, prefix='w', start_num=0):
+    """
+    Save images specified in windows to files
+    :param img:
+    :param windows:
+    :param size: the final image size to be saved
+    :return:
+    """
+    for i, window in enumerate(windows):
+        fname = path + prefix +str(i+start_num) + '.png'
+        sub_img = get_sub_image(img, window)
+        re_img = scipy.misc.imresize(sub_img, size)
+        scipy.misc.imsave(fname, re_img)
 
 
 # Define a function that takes an image,
@@ -90,11 +108,12 @@ def slide_window(img, x_start_stop=[None, None], y_start_stop=[None, None],
 
 if __name__ == '__main__':
     #image = mpimg.imread('bbox-example-image.jpg')
-    image = mpimg.imread('../test/frame350.jpg')
+    image = scipy.misc.imread('../test/frame350.jpg')
 
     windows = slide_window(image, x_start_stop=[None, None], y_start_stop=[None, None],
-                           xy_window=(128, 128), xy_overlap=(0.5, 0.5))
+                           xy_window=(128, 128), xy_overlap=(0.75, 0.75))
     window_img = draw_boxes(image, windows, color=(0, 0, 255), thick=6)
     plt.imshow(window_img)
     plt.show()
-    show_grid_view(image, windows, xy_nums=(10,19))
+    #show_grid_view(image, windows, xy_nums=(10,19))
+    show_grid_view(image, windows, xy_nums=(20,45))
