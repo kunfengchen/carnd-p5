@@ -61,9 +61,9 @@ Using [exercise/get_hog.py](exercise/get_hog.py), I then explored different colo
 
 Here two car examples using different color spaces and HOG parameters of `orientations=9`, `pixels_per_cell=(2, 2)` and `cells_per_block=(8, 8)`: 
 
-![car1-hogs.git](output/car1-hogs.git)
+![output/car1-hogs.git](output/car1-hogs.png)
 
-![car1-hogs.git](output/car2-hogs.git)
+![output/car2-hogs.git](output/car2-hogs.png)
 
 Choosing `pixels_per_cell=(2, 2)` and `cells_per_block=(8, 8)` for viewing can see the car shape ealier to decide which one to pick. However, I have to use `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)` for training due to the memory constrain.
 
