@@ -109,3 +109,7 @@ Here's an example result showing the heatmap and bounding boxes overlaid on a fr
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
 
+---
+
+### References
+[On-Road Vehicle and Lane Detection](https://web.stanford.edu/class/ee368/Project_Spring_1415/Reports/Lee_Wong_Xiao.pdf)
