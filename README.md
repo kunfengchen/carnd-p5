@@ -69,7 +69,7 @@ Choosing `pixels_per_cell=(2, 2)` and `cells_per_block=(8, 8)` for viewing can s
 
 ####2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and...
+I tried various combinations of parameters and `pixels_per_cell=(8, 8)`, `cells_per_block=(2, 2)`, and `orientations=9` are good HOG parameters. For the color space, YUV channel 0 seems be good for the cars.
 
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
