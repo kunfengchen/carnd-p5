@@ -1,4 +1,4 @@
-# Carnd-P5: Vehicle Detection and Tracking
+# Carnd-P5: Vehicle Detection and Tracking (In Progress)
 
 ---
 
@@ -73,7 +73,7 @@ I tried various combinations of parameters and `pixels_per_cell=(8, 8)`, `cells_
 
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using...
+Impletmented in train() at [classifier.py](classifier.py), I trained a linear SVM using combination of features...
 
 ###Sliding Window Search
 
