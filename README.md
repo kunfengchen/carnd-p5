@@ -65,6 +65,9 @@ Here two car examples using different color spaces and HOG parameters of `orient
 
 ![output/car2-hogs.git](output/car2-hogs.png)
 
+![output/notcar-hog1.git](output/notcar_hog1.png)
+
+
 Choosing `pixels_per_cell=(2, 2)` and `cells_per_block=(8, 8)` for viewing can see the car shape ealier to decide which one to pick. However, I have to use `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)` for training due to the memory constrain.
 
 ####2. Explain how you settled on your final choice of HOG parameters.
