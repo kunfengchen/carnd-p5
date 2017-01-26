@@ -55,7 +55,7 @@ The code for this step is contained in get_hog_features() cell of [classifier.py
 
 I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
-![alt text][image1]
+![car_notcar](output/car_notcar.png)
 
 Using [exercise/get_hog.py](exercise/get_hog.py), I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
