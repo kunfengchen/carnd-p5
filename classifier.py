@@ -16,10 +16,13 @@ CLASSIFIER_IMG_SIZE = (64, 64) # Image size for training and detecting
 MODEL_FIEL_NAME = "linearSVC_model.pkl"
 SCALER_FILE_NAME = "x_scaler.pkl"
 
-PIX_PER_CELL= 2  # Default pixels per cell for hog function
-CELLs_PER_BLOCK = 8  # Default cells per block for hog function
-ORIENTS_HOG = 9  # Default orientations for hog function
+PIX_PER_CELL= 8  # Default pixels per cell for hog function
+CELLS_PER_BLOCK = 2  # Default cells per block for hog function
+ORIENTS_HOG = 8  # Default orientations for hog function
 HOG_CHANNEL = 0  # Default color channel for hog function
+CSPACE = 'YCrCb'  # Default color space for hog function
+#CSPACE = 'RGB'  # Default color space for hog function
+DECISION_THRESHOLD = 4  # Default positive threshold for decision_function
 
 
 # Define a function to compute binned color features
@@ -72,6 +75,8 @@ def extract_one_features(image, cspace='RGB', spatial_size=(32, 32),
             feature_image = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
         elif cspace == 'YUV':
             feature_image = cv2.cvtColor(image, cv2.COLOR_RGB2YUV)
+        elif cspace == 'YCrCb':
+            feature_image = cv2.cvtColor(image, cv2.COLOR_RGB2YCrCb)
     else: feature_image = np.copy(image)
     # Apply bin_spatial() to get spatial color features
     spatial_features = bin_spatial(feature_image, size=spatial_size)
@@ -81,7 +86,19 @@ def extract_one_features(image, cspace='RGB', spatial_size=(32, 32),
     hog_features = get_hog_features(
         feature_image[:,:,hog_channel], orient,
         pix_per_cell, cell_per_block, vis=False, feature_vec=True)
+    """
+    hog_features_2 = get_hog_features(  # Add addtional hog for channel 2
+             feature_image[:,:,2], orient,
+             pix_per_cell, cell_per_block, vis=False, feature_vec=True)
+    hog_features_3 = get_hog_features(  # Add addtional hog for channel 2
+        feature_image[:,:,1], orient,
+        pix_per_cell, cell_per_block, vis=False, feature_vec=True)
+    """
     return np.concatenate((spatial_features, hist_features, hog_features))
+    #return np.concatenate((hist_features, hog_features, hog_features_2, hog_features_3))
+    #return np.concatenate((spatial_features, hog_features, hog_features_2, hog_features_3))
+    #return np.concatenate(( hist_features, hog_features))
+    #return hog_features
 
 
 def extract_features(imgs, cspace='RGB', spatial_size=(32, 32),
@@ -118,20 +135,25 @@ def train():
     notcars_image_glob_string = 'data/non-vehicles/*/*.png'
     notcars = get_image_names(notcars_image_glob_string)
 
-    car_features = extract_features(cars, cspace='RGB', spatial_size=(32, 32),
+    t=time.time()
+    print("Extrating features", len(cars), " car images ",
+          len(notcars), " non car images")
+    car_features = extract_features(cars, cspace=CSPACE, spatial_size=(32, 32),
                                     hist_bins=32, hist_range=(0, 256),
                                     orient=ORIENTS_HOG, pix_per_cell=PIX_PER_CELL,
-                                    cell_per_block=CELLs_PER_BLOCK,
+                                    cell_per_block=CELLS_PER_BLOCK,
                                     hog_channel=HOG_CHANNEL)
-    notcar_features = extract_features(notcars, cspace='RGB', spatial_size=(32, 32),
+    notcar_features = extract_features(notcars, cspace=CSPACE, spatial_size=(32, 32),
                                        hist_bins=32, hist_range=(0, 256),
                                        orient=ORIENTS_HOG, pix_per_cell=PIX_PER_CELL,
-                                       cell_per_block=CELLs_PER_BLOCK,
+                                       cell_per_block=CELLS_PER_BLOCK,
                                        hog_channel=HOG_CHANNEL)
-
+    t2 = time.time()
+    print(t2-t, 'Seconds to load imags')
 
     # Create an array stack of feature vectors
     X = np.vstack((car_features, notcar_features)).astype(np.float64)
+    print("X shape = ", X.shape)
     # Fit a per-column scaler
     X_scaler = StandardScaler().fit(X)
 

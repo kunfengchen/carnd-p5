@@ -57,7 +57,7 @@ def save_sub_images(
     :return:
     """
     for i, window in enumerate(windows):
-        fname = path + prefix +str(i+start_num) + '.png'
+        fname = path + str(prefix) +str(i+start_num) + '.png'
         sub_img = get_sub_image(img, window)
         re_img = scipy.misc.imresize(sub_img, size)
         scipy.misc.imsave(fname, re_img)
