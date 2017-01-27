@@ -78,6 +78,24 @@ I tried various combinations of parameters and `pixels_per_cell=(8, 8)`, `cells_
 
 Impletmented at train() in [classifier.py](classifier.py), I trained a linear SVM using combination of features hogs of YCrCb channel 1, 2, and 3, plus binned color features and color histogram features. All data had scaled using StandardScaler. Split the data into 80:20 of train and test set. The training accuracy is 100%, and test accuracy 0.9986. I saved the scaler and training model to files `x_scaler.pkl` and `linearSVC_model.pkl` for later pipeline to use.
 
+```
+/usr/bin/python3.5 classifier.py
+Extrating features 8792  car images  9666  non car images
+63.31770920753479 Seconds to load imags
+X shape =  (18458, 4800)
+X_scaler saved to: x_scaler.pkl
+Training LinearSVC
+9.072195291519165 Seconds to train SVC...
+Train Accuracy of SVC =  1.0
+Test Accuracy of SVC =  0.994582881907
+classified model saved to: linearSVC_model.pkl
+Train Accuracy of SVC after reload =  1.0
+Test Accuracy of SVC after reload =  0.994582881907
+8.726119995117188e-05 Seconds to predict with SVC
+
+Process finished with exit code 0
+```
+
 ###Sliding Window Search
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
