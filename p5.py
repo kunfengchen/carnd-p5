@@ -194,7 +194,7 @@ def detect_vehicles_video(video_name,
     while cap.isOpened():
         ret, frame = cap.read()
         frame_count += 1
-        if (frame_count % 50 != 0):
+        if (frame_count % 10 != 0):
             continue
         if frame is not None:
             prefix = 'f' + str(frame_count)
@@ -266,4 +266,4 @@ if __name__ == '__main__':
         classifier=classifier,
         scaler=scaler,
         mining=False,
-        decision=0)
+        decision=3.3)

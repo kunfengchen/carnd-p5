@@ -86,16 +86,14 @@ def extract_one_features(image, cspace='RGB', spatial_size=(32, 32),
     hog_features = get_hog_features(
         feature_image[:,:,hog_channel], orient,
         pix_per_cell, cell_per_block, vis=False, feature_vec=True)
-    """
     hog_features_2 = get_hog_features(  # Add addtional hog for channel 2
              feature_image[:,:,2], orient,
              pix_per_cell, cell_per_block, vis=False, feature_vec=True)
     hog_features_3 = get_hog_features(  # Add addtional hog for channel 2
         feature_image[:,:,1], orient,
         pix_per_cell, cell_per_block, vis=False, feature_vec=True)
-    """
-    return np.concatenate((spatial_features, hist_features, hog_features))
-    #return np.concatenate((hist_features, hog_features, hog_features_2, hog_features_3))
+    #return np.concatenate((spatial_features, hist_features, hog_features))
+    return np.concatenate((hist_features, hog_features, hog_features_2, hog_features_3))
     #return np.concatenate((spatial_features, hog_features, hog_features_2, hog_features_3))
     #return np.concatenate(( hist_features, hog_features))
     #return hog_features
@@ -149,7 +147,7 @@ def train():
                                        cell_per_block=CELLS_PER_BLOCK,
                                        hog_channel=HOG_CHANNEL)
     t2 = time.time()
-    print(t2-t, 'Seconds to load imags')
+    print(t2-t, 'seconds to load imags extract features')
 
     # Create an array stack of feature vectors
     X = np.vstack((car_features, notcar_features)).astype(np.float64)
@@ -184,7 +182,7 @@ def train():
     print("Training LinearSVC")
     svc.fit(X_train, y_train)
     t2 = time.time()
-    print(t2-t, 'Seconds to train SVC...')
+    print(t2-t, 'seconds to train SVC...')
     # Check the score of the SVC
     print('Train Accuracy of SVC = ', svc.score(X_train, y_train))
     print('Test Accuracy of SVC = ', svc.score(X_test, y_test))
