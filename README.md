@@ -80,19 +80,18 @@ Impletmented at train() in [classifier.py](classifier.py), I trained a linear SV
 
 ```
 /usr/bin/python3.5 classifier.py
-Extrating features 8792  car images  9666  non car images
-63.31770920753479 Seconds to load imags
-X shape =  (18458, 4800)
+Extrating features 8792  car images  15908  non car images
+83.39084649085999 seconds to load imags extract features
+X shape =  (24700, 4800)
 X_scaler saved to: x_scaler.pkl
 Training LinearSVC
-9.072195291519165 Seconds to train SVC...
+11.038205862045288 seconds to train SVC...
 Train Accuracy of SVC =  1.0
-Test Accuracy of SVC =  0.994582881907
+Test Accuracy of SVC =  0.993319838057
 classified model saved to: linearSVC_model.pkl
 Train Accuracy of SVC after reload =  1.0
-Test Accuracy of SVC after reload =  0.994582881907
-8.726119995117188e-05 Seconds to predict with SVC
-
+Test Accuracy of SVC after reload =  0.993319838057
+8.606910705566406e-05 Seconds to predict with SVC
 Process finished with exit code 0
 ```
 
