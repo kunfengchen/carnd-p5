@@ -135,10 +135,11 @@ Here I'll talk about the approach I took, what techniques I used, what worked an
 * It's really hard to remove false postives, not without scarifing the true positives. Ideal way is to seperate the condifence between true positives and false postive as much as possible. Experiented with hard-negative mining a lot, but seems no effect, unless put around 50 times of negative images more than other images. This quickly exhasted the memeoyry for processing adn training the model. Played with C = 1, 0.9 , 0.01, 0.001, and 0.0001 in LinearSVC, and found C=0.0001 has good effect on negative images.
 * Data set for training is really important, then the model selection with pararmeter search with the testing. Visusalization will help in building and testing the model.
 * It takes a long time to process one frame, more than the real time. More improvemnts and techniques are needed for real SDC applications.
-* Most of the false positives tend to have a structure shape, like traffic signs, bridges, curbs, that has complicated lines, just like a car. This should due to the feature extraction that is mostly HOG for the abstraction of a car structure. Unfortunatly it may missing the information of the structure relationship that cause a lot of false positives. This what CNN is good at, it keeps the relationship of surrounding structure/pixels.
+* Most of the false positives tend to have a structure shape, like traffic signs, bridges, curbs, that has complicated lines, just like a car. This should due to the feature extraction that is mostly HOG for the abstraction of a car structure. Unfortunatly it may missing the information of the structure relationship that causes a lot of false positives. This's what CNN is good at, it keeps the relationship of surrounding structure/pixels.
+* It's surprising the model is gernerlized to detect the car most of the time, without "hard-true" postive mining.
 
 ---
 
 ### References
-[On-Road Vehicle and Lane Detection](https://web.stanford.edu/class/ee368/Project_Spring_1415/Reports/Lee_Wong_Xiao.pdf)
-[SPECIAL TOPICS 1 - THE KALMAN FILTER](https://www.youtube.com/watch?v=CaCcOwJPytQ&list=PLX2gX-ftPVXU3oUFNATxGXY90AULiqnWT)
+* [On-Road Vehicle and Lane Detection](https://web.stanford.edu/class/ee368/Project_Spring_1415/Reports/Lee_Wong_Xiao.pdf)
+* [SPECIAL TOPICS 1 - THE KALMAN FILTER](https://www.youtube.com/watch?v=CaCcOwJPytQ&list=PLX2gX-ftPVXU3oUFNATxGXY90AULiqnWT)
