@@ -132,6 +132,10 @@ Here's an example result showing the heatmap and bounding boxes overlaid on a fr
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
 
+* It's really hard to remove false postives, not without scarifing the true positives. Ideal way is to seperate the condifence between true positives and false postive as much as possible. Experiented with hard-negative mining a lot, but seems no effect, unless put around 50 times of negative images more than other images. This quickly exhasted the memeoyry for processing adn training the model. Played with C = 1, 0.9 , 0.01, 0.001, and 0.0001 in LinearSVC, and found C=0.0001 has good effect on negative images.
+* Data set for training is really important, then the model selection with pararmeter search with the testing. Visusalization will help in building and testing the model.
+* It takes a long time to process one frame, more than the real time. More improvemnts and techniques are needed for real SDC applications.
+
 ---
 
 ### References
