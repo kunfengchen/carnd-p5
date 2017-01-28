@@ -76,7 +76,7 @@ I tried various combinations of parameters and `pixels_per_cell=(8, 8)`, `cells_
 
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-Impletmented at train() in [classifier.py](classifier.py), I trained a linear SVM using combination of features hogs of YCrCb channel 1, 2, and 3, plus binned color features and color histogram features. All data had scaled using StandardScaler. Split the data into 80:20 of train and test set. The training accuracy is 100%, and test accuracy 0.9986. I saved the scaler and training model to files `x_scaler.pkl` and `linearSVC_model.pkl` for later pipeline to use.
+Impletmented at train() in [classifier.py](classifier.py), I trained a linear SVM using combination of features hogs of YCrCb channel 1, 2, and 3, plus binned color features and color histogram features. Training data set are from [vehicles.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/vehicles.zip) and [non_vehicles.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/non-vehicles.zip). All data had scaled using [StandardScaler](http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html). Split the data into 80:20 of train and test set. The training accuracy is 100%, and test accuracy 0.9986. I saved the scaler and training model to files `x_scaler.pkl` and `linearSVC_model.pkl` for later pipeline to use.
 
 ```
 /usr/bin/python3.5 classifier.py
@@ -142,5 +142,7 @@ Here I'll talk about the approach I took, what techniques I used, what worked an
 ---
 
 ### References
+* Class dissusion forums
 * [On-Road Vehicle and Lane Detection](https://web.stanford.edu/class/ee368/Project_Spring_1415/Reports/Lee_Wong_Xiao.pdf)
+* [Histogram of Oriented Gradients and Object Detection](http://www.pyimagesearch.com/2014/11/10/histogram-oriented-gradients-object-detection/)
 * [SPECIAL TOPICS 1 - THE KALMAN FILTER](https://www.youtube.com/watch?v=CaCcOwJPytQ&list=PLX2gX-ftPVXU3oUFNATxGXY90AULiqnWT)
