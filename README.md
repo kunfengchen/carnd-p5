@@ -132,8 +132,9 @@ Here's an example result showing the heatmap and bounding boxes overlaid on a fr
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
 
-* It's really hard to remove false postives, not without scarifing the true positives. Ideal way is to seperate the condifence between true positives and false postive as much as possible. Experiented with hard-negative mining a lot, but seems no effect, unless put around 50 times of negative images more than other images. This quickly exhasted the memeoyry for processing adn training the model. Played with C = 1, 0.9 , 0.01, 0.001, and 0.0001 in [LinearSVC]
+* It's really hard to remove false postives, not without scarifing the true positives. Ideal way is to seperate the condifence between true positives and false postive as much as possible. Experiented with hard-negative mining (HNM) a lot, but seems no effect, unless put around 50 times of negative images more than other images. This quickly exhasted the memeoyry for processing adn training the model. Played with C = 1, 0.9 , 0.01, 0.001, and 0.0001 in [LinearSVC]
 (http://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html), and found C=0.0001 has good effect on negative images.
+* I realied I did the HNM a little different. Instead of using negative images from training set, I used negative images from the real data set, the target project video frame images. It should work more effective since I overfit/leaking the test set. However HNM is still not effective for me yet. 
 * Data set for training is really important, then select the features to extract, and then select the model with pararmeter search with the testing. Visusalization will help in building and testing the model. Haven't try it yet, but [GridSearchCV](http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html) will save time on looking good combinations of the models and parameter grids.
 * It takes a long time to process one frame, more than the real time. More improvemnts and techniques are needed for real SDC applications.
 * Most of the false positives tend to have a structure shape, like traffic signs, bridges, curbs, that has complicated lines, just like a car. This should due to the feature extraction that is mostly HOG for the abstraction of a car structure. Unfortunatly it may missing the information of the structure relationship that causes a lot of false positives. This's what CNN is good at, it keeps the relationship of surrounding structure/pixels.
@@ -143,6 +144,8 @@ Here I'll talk about the approach I took, what techniques I used, what worked an
 
 ### References
 * Class dissusion forums
+* [Histogram of Oriented Gradients](http://scikit-image.org/docs/dev/auto_examples/plot_hog.html)
 * [On-Road Vehicle and Lane Detection](https://web.stanford.edu/class/ee368/Project_Spring_1415/Reports/Lee_Wong_Xiao.pdf)
 * [Histogram of Oriented Gradients and Object Detection](http://www.pyimagesearch.com/2014/11/10/histogram-oriented-gradients-object-detection/)
+* [Scaling the regularization parameter for SVCs](http://scikit-learn.org/stable/auto_examples/svm/plot_svm_scale_c.html#sphx-glr-auto-examples-svm-plot-svm-scale-c-py)
 * [SPECIAL TOPICS 1 - THE KALMAN FILTER](https://www.youtube.com/watch?v=CaCcOwJPytQ&list=PLX2gX-ftPVXU3oUFNATxGXY90AULiqnWT)
