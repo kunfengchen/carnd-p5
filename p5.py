@@ -11,7 +11,7 @@ from classifier import extract_one_features, \
     train, CLASSIFIER_IMG_SIZE, MODEL_FIEL_NAME, SCALER_FILE_NAME, \
     PIX_PER_CELL, CELLS_PER_BLOCK, HOG_CHANNEL, ORIENTS_HOG, CSPACE, \
     DECISION_THRESHOLD
-
+from track import Tracker
 
 def load_scaler():
     # load the scaler
@@ -92,6 +92,7 @@ def detect_vehicles_image_name(img_name,
                                scaler=None,
                                classifier=None,
                                decision=DECISION_THRESHOLD,
+                               tracker=None,
                                save_path=None,
                                prefix=None,
                                view=True):
@@ -100,6 +101,7 @@ def detect_vehicles_image_name(img_name,
                                  scaler=scaler,
                                  save_path=save_path,
                                  decision=decision,
+                                 tracker=tracker,
                                  prefix=None,
                                  classifier=classifier,
                                  view=view)
@@ -109,6 +111,7 @@ def detect_vehicles_image(input_img,
                           scaler=None,
                           classifier=None,
                           decision=DECISION_THRESHOLD,
+                          tracker=None,
                           save_path=None,
                           prefix=None,
                           view=True,
@@ -156,8 +159,11 @@ def detect_vehicles_image(input_img,
             #window_img = draw_boxes(img, car_window_list, color=(0, 0, 255), thick=6)
             #plt.imshow(window_img)
             #plt.show()
+    if tracker is not None:
+        track_car_windows = tracker.track(all_car_window_list)
+    #window_img = draw_boxes(img, all_car_window_list, color=(0, 0, 255), thick=6)
+    window_img = draw_boxes(img, track_car_windows, color=(0, 255, 0), thick=6)
 
-    window_img = draw_boxes(img, all_car_window_list, color=(0, 0, 255), thick=6)
     if view:
         plt.imshow(window_img)
         if show:
@@ -186,6 +192,7 @@ def detect_vehicles_video(video_name,
     fourcc = cv2.VideoWriter_fourcc(*'H264')
     out = cv2.VideoWriter(video_out_name, fourcc, 20.0, (1280, 720))
     frame_count = 0
+    tracker = Tracker()
 
     if mining:
         save_path = SAVE_PATH
@@ -204,6 +211,7 @@ def detect_vehicles_video(video_name,
                 classifier=classifier,
                 scaler=scaler,
                 decision=decision,
+                tracker=tracker,
                 save_path=save_path,
                 prefix=prefix,
                 view=True, show=False)
@@ -266,4 +274,4 @@ if __name__ == '__main__':
         classifier=classifier,
         scaler=scaler,
         mining=False,
-        decision=3.3)
+        decision=2.375)

@@ -175,12 +175,38 @@ def train():
     X_train, X_test, y_train, y_test = train_test_split(
         scaled_X, y, test_size=0.2, random_state=rand_state)
 
+    mining = True
+    if mining:
+        ### Train hard-negative mining with more weight to make it effective.
+        neg_glob_string = 'data/non-vehicles/saved_hard*/*.png'
+        negs = get_image_names(neg_glob_string)
+        n_neg = len(negs)
+        neg_features = extract_features(negs, cspace=CSPACE, spatial_size=(32, 32),
+                                        hist_bins=32, hist_range=(0, 256),
+                                        orient=ORIENTS_HOG, pix_per_cell=PIX_PER_CELL,
+                                        cell_per_block=CELLS_PER_BLOCK,
+                                        hog_channel=HOG_CHANNEL)
+        print("Add hard-negative mining for more weights",
+              neg_glob_string, n_neg, "images")
+        n_X_train = len(X_train)
+        sample_weight = np.ones(n_X_train + n_neg)
+        sample_weight[-n_neg:] *= 2000  # make hard-negative more weight
+        # Add hard-negative mining for training
+        scaled_neg = scaler_load.transform(neg_features)
+        X_train = np.vstack((X_train, scaled_neg))
+        y_train = np.hstack((y_train, np.zeros(n_neg)))
+        print("new X_train shape = ", X_train.shape)
+
     # Use a linear SVC
-    svc = LinearSVC()
+    #svc = LinearSVC()
+    svc = LinearSVC(C=0.0001)
     # Check the training time for the SVC
     t=time.time()
     print("Training LinearSVC")
-    svc.fit(X_train, y_train)
+    if mining:
+        svc.fit(X_train, y_train, sample_weight=sample_weight)
+    else:
+        svc.fit(X_train, y_train)
     t2 = time.time()
     print(t2-t, 'seconds to train SVC...')
     # Check the score of the SVC
