@@ -10,7 +10,7 @@ The goals / steps of this project are the following:
 * Optionally, you can also apply a color transform and append binned color features, as well as histograms of color, to your HOG feature vector. 
 * Note: for those first two steps don't forget to normalize your features and randomize a selection for training and testing.
 * Implement a sliding-window technique and use your trained classifier to search for vehicles in images.
-* Run your pipeline on a video stream and create a heat map of recurring detections frame by frame to reject outliers and follow detected vehicles.
+* Run your pipeline on a video stream and create a heat map of recurring detection frame by frame to reject outliers and follow detected vehicles.
 * Estimate a bounding box for vehicles detected.
 
 [//]: # (Image References)
@@ -76,7 +76,7 @@ I tried various combinations of parameters and `pixels_per_cell=(8, 8)`, `cells_
 
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-Impletmented at train() in [classifier.py](classifier.py), I trained a linear SVM using combination of features hogs of YCrCb channel 1, 2, and 3, plus binned color features and color histogram features. Training data set are from [vehicles.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/vehicles.zip) and [non_vehicles.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/non-vehicles.zip). All data had scaled using [StandardScaler](http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html). Split the data into 80:20 of train and test set. The training accuracy is 100%, and test accuracy 0.9986. I saved the scaler and training model to files `x_scaler.pkl` and `linearSVC_model.pkl` for later pipeline to use.
+Implemented at train() in [classifier.py](classifier.py), I trained a linear SVM using combination of features hogs of YCrCb channel 1, 2, and 3, plus binned color features and color histogram features. Training data set are from [vehicles.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/vehicles.zip) and [non_vehicles.zip](https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/non-vehicles.zip). All data had scaled using [StandardScaler](http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html). Split the data into 80:20 of train and test set. The training accuracy is 100%, and test accuracy 0.9986. I saved the scaler and training model to files `x_scaler.pkl` and `linearSVC_model.pkl` for later pipeline to use.
 
 ```
 /usr/bin/python3.5 classifier.py
@@ -99,7 +99,7 @@ Process finished with exit code 0
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I have tried diffent combination of widdow size and overlaping rates. The windows size smaller than (90, 90) wuold be too small and produce too many windows that slow done the process. The windwos size larger than (200, 200) woud make boulding box too big for a car. The overlaping rate biggiger than (0.5 , 0.5) will also produce too many windows and slow down the process. Smaller than (0.5, 0.5) would be not enough of sliding coverage for a car. Therefore, I have used 4 window scales (100, 100), (120, 120), (140, 140), and (180, 180) with overlaping (0.5, 0.5) with each scale.
+I have tried different combination of window size and overlapping rates. The windows size smaller than (90, 90) would be too small and produce too many windows that slow done the process. The windows size larger than (200, 200) would make bounding box too big for a car. The overlapping rate bigger than (0.5 , 0.5) will also produce too many windows and slow down the process. Smaller than (0.5, 0.5) would be not enough of sliding coverage for a car. Therefore, I have used 4 window scales (100, 100), (120, 120), (140, 140), and (180, 180) with overlapping (0.5, 0.5) with each scale.
 
 The sliding window code is method `slide_window()` in [exercise/sliding_window.py](exercise/sliding_window.py).
 The consumer part is in [p5.py](p5.py):
@@ -117,7 +117,7 @@ xy_windows = [ (100, 100), (120, 120), (140, 140), (180, 180)]
 
 ####1. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to try to minimize false positives and reliably detect cars?
 
-I got a lot of false positives at the begining. Then I applied hard-negative mining (HNM) on the classifier. This the most time I spent on the project with little effect:
+I got a lot of false positives at the beginning. Then I applied hard-negative mining (HNM) on the classifier. This the most time I spent on the project with little effect:
 
 ![output/sw2.png](output/sw2.png)
 
@@ -166,20 +166,21 @@ Here's an example result showing the heatmap and bounding boxes overlaid on a fr
 
 Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
 
-* It's really hard to remove false postives, not without scarifing the true positives. Ideal way is to seperate the condifence between true positives and false postive as much as possible. Experiented with hard-negative mining (HNM) a lot, but seems no effect, unless put around 50 times of negative images more than other images. This quickly exhasted the memeoyry for processing adn training the model. Played with C = 1, 0.9 , 0.01, 0.001, and 0.0001 in [LinearSVC]
+* It's really hard to remove false positives, not without scarifing the true positives. Ideal way is to separate the confidence between true positives and false positive as much as possible. Experimented with hard-negative mining (HNM) a lot, but seems no effect, unless put around 50 times of negative images more than other images. This quickly exhausted the memeory for processing and training the model. Played with C = 1, 0.9 , 0.01, 0.001, and 0.0001 in [LinearSVC]
 (http://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html), and found C=0.0001 has good effect on negative images.
-* I realied I did the HNM a little different. Instead of using negative images from training set, I used negative images from the real data set, the target project video frame images. It should work more effective since I overfit/leaking the test set. However HNM is still not effective for me yet. 
-* Data set for training is really important, then select the features to extract, and then select the model with pararmeter search with the testing. Visusalization will help in building and testing the model. Haven't try it yet, but [GridSearchCV](http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html) will save time on looking good combinations of the models and parameter grids.
+* I realized I did the HNM a little different. Instead of using negative images from training set, I used negative images from the real data set, the target project video frame images. It should work more effective since I over-fitted/leaked the test set. However HNM is still not effective for me yet. 
+* Data set for training is really important, then select the features to extract, and then select the model with pararmeter search with the testing. Visualization will help in building and testing the model. Haven't try it yet, but [GridSearchCV](http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html) will save time on looking good combinations of the models and parameter grids.
 * It takes a long time to process one frame, more than the real time. More improvemnts and techniques are needed for real SDC applications.
-* Most of the false positives tend to have a structure shape, like traffic signs, bridges, curbs, that has complicated lines, just like a car. This should due to the feature extraction that is mostly HOG for the abstraction of a car structure. Unfortunatly it may missing the information of the structure relationship that causes a lot of false positives. This's what CNN is good at, it keeps the relationship of surrounding structure/pixels.
-* It's surprising the model is gernerlized to detect the car most of the time, without "hard-true" postive mining.
+* Most of the false positives tend to have a structure shape, like traffic signs, bridges, curbs, that has complicated lines, just like a car. This should due to the feature extraction that is mostly HOG for the abstraction of a car structure. Unfortunately it may missing the information of the structure relationship that causes a lot of false positives. This's what CNN is good at, it keeps the relationship of surrounding structure/pixels.
+* It's surprising the model is generalized to detect the car most of the time, without "hard-true" positive mining.
 
 ---
 
 ### References
-* Class dissusion forums
+* Class discussion forums
 * [Histogram of Oriented Gradients](http://scikit-image.org/docs/dev/auto_examples/plot_hog.html)
 * [On-Road Vehicle and Lane Detection](https://web.stanford.edu/class/ee368/Project_Spring_1415/Reports/Lee_Wong_Xiao.pdf)
 * [Histogram of Oriented Gradients and Object Detection](http://www.pyimagesearch.com/2014/11/10/histogram-oriented-gradients-object-detection/)
+* [Non-maximum-suppression](http://www.pyimagesearch.com/2014/11/17/non-maximum-suppression-object-detection-python/)
 * [Scaling the regularization parameter for SVCs](http://scikit-learn.org/stable/auto_examples/svm/plot_svm_scale_c.html#sphx-glr-auto-examples-svm-plot-svm-scale-c-py)
 * [SPECIAL TOPICS 1 - THE KALMAN FILTER](https://www.youtube.com/watch?v=CaCcOwJPytQ&list=PLX2gX-ftPVXU3oUFNATxGXY90AULiqnWT)
