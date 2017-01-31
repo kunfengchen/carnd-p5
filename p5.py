@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 import scipy.misc
+from random import random
 from sklearn.externals import joblib
 from exercise.sliding_window import \
     slide_window, draw_boxes, show_grid_view, \
@@ -112,6 +113,7 @@ def detect_vehicles_image(input_img,
                           classifier=None,
                           decision=DECISION_THRESHOLD,
                           tracker=None,
+                          method='heatmap',
                           save_path=None,
                           prefix=None,
                           view=True,
@@ -131,11 +133,13 @@ def detect_vehicles_image(input_img,
     img = np.copy(input_img)
     # diffent sliding window sizes
     xy_windows = [ (100, 100), (120, 120), (140, 140), (180, 180)]
+    #xy_windows = [ (120, 120), (130, 130), (140, 140)]
     #xy_windows=[(180, 180)]
-    xy_overlap = (0.50, 0.50)
+    #xy_overlaps = [(0.50, 0.50), (0.65, 0.65), (0.70, 0.70)]
+    xy_overlaps = [(0.50, 0.50), (0.50, 0.50), (0.50, 0.50)]
     all_car_window_list = []  # car window list for all window scales
 
-    for i, xy_window in enumerate(xy_windows):
+    for i, (xy_window, xy_overlap) in enumerate(zip(xy_windows, xy_overlaps)):
         img_height = img.shape[0]
         img_width  = img.shape[1]
         view_height = int(img_height/2)
@@ -159,10 +163,17 @@ def detect_vehicles_image(input_img,
             #window_img = draw_boxes(img, car_window_list, color=(0, 0, 255), thick=6)
             #plt.imshow(window_img)
             #plt.show()
-    if tracker is not None:
-        track_car_windows = tracker.track(all_car_window_list)
-    #window_img = draw_boxes(img, all_car_window_list, color=(0, 0, 255), thick=6)
-    window_img = draw_boxes(img, track_car_windows, color=(0, 255, 0), thick=6)
+    window_img = None
+    if method == 'nms':
+        ### track the cars using nms
+        track_car_windows = tracker.track_nms(all_car_window_list)
+        window_img = draw_boxes(img, track_car_windows, color=(0, 255, 0), thick=3)
+    else:
+        ### track the cars using heat map and labels
+        track_labels = tracker.track_labels(all_car_window_list)
+        print(track_labels[1], 'cars found')
+        window_img= Tracker.draw_labeled_bboxes(img, track_labels)
+
 
     if view:
         plt.imshow(window_img)
@@ -175,6 +186,7 @@ def detect_vehicles_image(input_img,
 def detect_vehicles_video(video_name,
                           classifier=None,
                           scaler=None,
+                          tracker=None,
                           decision=DECISION_THRESHOLD,
                           mining=False,
                           view=True):
@@ -192,7 +204,6 @@ def detect_vehicles_video(video_name,
     fourcc = cv2.VideoWriter_fourcc(*'H264')
     out = cv2.VideoWriter(video_out_name, fourcc, 20.0, (1280, 720))
     frame_count = 0
-    tracker = Tracker()
 
     if mining:
         save_path = SAVE_PATH
@@ -201,7 +212,7 @@ def detect_vehicles_video(video_name,
     while cap.isOpened():
         ret, frame = cap.read()
         frame_count += 1
-        if (frame_count % 10 != 0):
+        if (frame_count % 5 != 0):
             continue
         if frame is not None:
             prefix = 'f' + str(frame_count)
@@ -250,6 +261,7 @@ if __name__ == '__main__':
     view = None
     classifier = load_classifier_model()
     scaler = load_scaler()
+    tracker = Tracker()
     if args.visual:
         view = True
     if args.train:
@@ -260,7 +272,8 @@ if __name__ == '__main__':
             args.image,
             save_path=SAVE_PATH,
             classifier=classifier,
-            scaler=scaler)
+            scaler=scaler,
+            tracker=tracker)
             #scaler=StandardScaler())
         """
         detect_vehicles_image_name(
@@ -273,5 +286,8 @@ if __name__ == '__main__':
         detect_vehicles_video(args.video,
         classifier=classifier,
         scaler=scaler,
+        tracker = tracker,
         mining=False,
-        decision=2.375)
+        decision=2.375,
+        view=True)
+
