@@ -127,11 +127,9 @@ Then I found [decision_function()](http://scikit-learn.org/stable/modules/genera
 
 ![output/sw4.png](output/sw4.png)
 
-Ultimately I searched on 4 scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.
+Ultimately I searched on 4 scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, fined-tune parameters in C and distance which provided a nice result.
 
 ![output/dec4.png](output/dec4.png)
-
-
 
 ---
 
