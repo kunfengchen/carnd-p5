@@ -1,4 +1,4 @@
-# Carnd-P5: Vehicle Detection and Tracking (In Progress)
+# Carnd-P5: Vehicle Detection and Tracking
 
 ---
 
@@ -117,9 +117,19 @@ xy_windows = [ (100, 100), (120, 120), (140, 140), (180, 180)]
 
 ####1. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to try to minimize false positives and reliably detect cars?
 
-Ultimately I searched on 4 scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+I got a lot of false positives at the begining. Here is an example:
 
-![dec4.png](output/dec4.png)
+![output/sw3.png](output/sw3.png)
+
+Then I applied hard-negative mining (HNM) on the classifier. This the most time I spent on the project with little effect. :
+
+![output/sw4.png](output/sw4.png)
+
+Then I found [decision_function()](http://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html#sklearn.svm.LinearSVC.decision_function) in `LinearSVC` and fine tune the distance threshold to get a better results:
+
+![output/dec4.png](output/dec4.png)
+
+Ultimately I searched on 4 scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.
 
 ---
 
