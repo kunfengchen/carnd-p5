@@ -99,21 +99,33 @@ Process finished with exit code 0
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+I have tried diffent combination of widdow size and overlaping rates. The windows size smaller than (90, 90) wuold be too small and produce too many windows that slow done the process. The windwos size larger than (200, 200) woud make boulding box too big for a car. The overlaping rate biggiger than (0.5 , 0.5) will also produce too many windows and slow down the process. Smaller than (0.5, 0.5) would be not enough of sliding coverage for a car. Therefore, I have used 4 window scales (100, 100), (120, 120), (140, 140), and (180, 180) with overlaping (0.5, 0.5) with each scale.
 
-![alt text][image3]
+The sliding window code is method `slide_window()` in [exercise/sliding_window.py](exercise/sliding_window.py).
+The consumer part is in [p5.py](p5.py):
+```
+xy_windows = [ (100, 100), (120, 120), (140, 140), (180, 180)]
+    xy_overlaps = [(0.50, 0.50), (0.50, 0.50), (0.50, 0.50)]
+    all_car_window_list = []  # car window list for all window scales
+
+    for i, (xy_window, xy_overlap) in enumerate(zip(xy_windows, xy_overlaps)):
+        window_list = slide_window(img, xy_window=xy_window,
+            xy_overlap=xy_overlap, y_start_stop=y_start_stop)
+        ...
+    
+```
 
 ####1. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to try to minimize false positives and reliably detect cars?
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+Ultimately I searched on 4 scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
 
-![alt text][image4]
+![dec4.png][output/dec4.png]
 ---
 
 ### Video Implementation
 
 ####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result](./project_video.mp4)
+Here's a [project_vidwo_out.mp4](./project_video_out.mp4)
 
 
 ####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
