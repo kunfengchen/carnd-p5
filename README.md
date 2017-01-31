@@ -133,7 +133,7 @@ Here's a [project_vidwo_out.mp4](./project_video_out.mp4)
 
 I used [track.py](trcak.py) to track positions of positive detections in 5 frames of the video. From the positive detections of 5 frames I created a heatmap and then thresholded that map to identify vehicle positions. I applied threshold at 8 to remove false positives. I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap. I then assumed each blob corresponded to a vehicle. I constructed bounding boxes to cover the area of each blob detected.
 
-Here's an example result showing the heatmap from a frame of video, the result of scipy.ndimage.measurements.label() and the bounding boxes then overlaid on the last frame of video:
+Here's an example result showing the heatmap from a frame of video, the result of scipy.ndimage.measurements.label() and the bounding boxes then overlaid on the frame of video:
 
 ![output/track_s1.png](output/track_s1.png)
 
@@ -143,12 +143,10 @@ Here's an example result showing the heatmap from a frame of video, the result o
 
 ![output/track_s4.png](output/track_s4.png)
 
-![output/track_s5.png](output/track_s5.png)
-
 
 Here's an example result showing the heatmap and bounding boxes overlaid on a frame of video:
 
-![output/track_s6.png](output/track_s6.png)
+![output/track_s5.png](output/track_s5.png)
 
 ---
 
