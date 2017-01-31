@@ -96,7 +96,8 @@ def detect_vehicles_image_name(img_name,
                                tracker=None,
                                save_path=None,
                                prefix=None,
-                               view=True):
+                               view=True,
+                               show=True):
     img = scipy.misc.imread(img_name)
     return detect_vehicles_image(img,
                                  scaler=scaler,
@@ -105,7 +106,8 @@ def detect_vehicles_image_name(img_name,
                                  tracker=tracker,
                                  prefix=None,
                                  classifier=classifier,
-                                 view=view)
+                                 view=view,
+                                 show=show)
 
 
 def detect_vehicles_image(input_img,
@@ -133,9 +135,6 @@ def detect_vehicles_image(input_img,
     img = np.copy(input_img)
     # diffent sliding window sizes
     xy_windows = [ (100, 100), (120, 120), (140, 140), (180, 180)]
-    #xy_windows = [ (120, 120), (130, 130), (140, 140)]
-    #xy_windows=[(180, 180)]
-    #xy_overlaps = [(0.50, 0.50), (0.65, 0.65), (0.70, 0.70)]
     xy_overlaps = [(0.50, 0.50), (0.50, 0.50), (0.50, 0.50)]
     all_car_window_list = []  # car window list for all window scales
 
@@ -159,10 +158,11 @@ def detect_vehicles_image(input_img,
             save_path=save_path,
             prefix=wprefix)
         all_car_window_list.extend(car_window_list)
-        #if view:
-            #window_img = draw_boxes(img, car_window_list, color=(0, 0, 255), thick=6)
-            #plt.imshow(window_img)
-            #plt.show()
+    if view:
+        show_window_img = draw_boxes(img, all_car_window_list, color=(0, 255, 255), thick=3)
+        plt.imshow(show_window_img)
+        if show:
+            plt.show()
     window_img = None
     if method == 'nms':
         ### track the cars using nms
@@ -170,8 +170,8 @@ def detect_vehicles_image(input_img,
         window_img = draw_boxes(img, track_car_windows, color=(0, 255, 0), thick=3)
     else:
         ### track the cars using heat map and labels
-        track_labels = tracker.track_labels(all_car_window_list)
-        print(track_labels[1], 'cars found')
+        track_labels = tracker.track_labels(all_car_window_list, view=view)
+        #print(track_labels[1], 'cars found')
         window_img= Tracker.draw_labeled_bboxes(img, track_labels)
 
 
@@ -189,7 +189,8 @@ def detect_vehicles_video(video_name,
                           tracker=None,
                           decision=DECISION_THRESHOLD,
                           mining=False,
-                          view=True):
+                          view=False,
+                          show=False):
     """
     Detect and track vehicles in video
     :param video_name: the input video
@@ -198,6 +199,7 @@ def detect_vehicles_video(video_name,
     :param mining: do the hard-negative mining (save positive images) or not.
     :return: mp4 with detected vehicles
     """
+    #video_out_name = "project_out.mp4"
     video_out_name = "project_out.mp4"
     cap = cv2.VideoCapture(video_name)
 
@@ -212,8 +214,8 @@ def detect_vehicles_video(video_name,
     while cap.isOpened():
         ret, frame = cap.read()
         frame_count += 1
-        if (frame_count % 5 != 0):
-            continue
+        #if (frame_count % 50 != 0):
+        #   continue
         if frame is not None:
             prefix = 'f' + str(frame_count)
             print("video frame: ", frame_count)
@@ -225,7 +227,7 @@ def detect_vehicles_video(video_name,
                 tracker=tracker,
                 save_path=save_path,
                 prefix=prefix,
-                view=True, show=False)
+                view=view, show=show)
             out_frame_bgr = cv2.cvtColor(out_frame, cv2.COLOR_RGB2BGR)
             if view is not None:
                 cv2.imshow('Vehicle Dectection and Tracking',
@@ -247,8 +249,7 @@ if __name__ == '__main__':
         help='Train the classifier')
     parser.add_argument(
         '--image',
-        #default="test/frame981.jpg",
-        #default="test/frame350.jpg",
+        #default="test/frame1100.jpg",
         help='image to be processed')
     parser.add_argument(
         '--video',
@@ -261,7 +262,6 @@ if __name__ == '__main__':
     view = None
     classifier = load_classifier_model()
     scaler = load_scaler()
-    tracker = Tracker()
     if args.visual:
         view = True
     if args.train:
@@ -270,24 +270,21 @@ if __name__ == '__main__':
     if args.image is not None:
         detect_vehicles_image_name(
             args.image,
-            save_path=SAVE_PATH,
+            save_path=None,
             classifier=classifier,
             scaler=scaler,
-            tracker=tracker)
-            #scaler=StandardScaler())
-        """
-        detect_vehicles_image_name(
-            'test/frame350.jpg',
-            save_path=SAVE_PATH,
-            classifier=classifier,
-            scaler=scaler)
-        exit()"""
+            tracker=Tracker(track_frame_number=1,heatmap_threshold=2),
+            decision=1.2,
+            view=True,
+            show=True)
+        exit()
     if args.video is not None:
         detect_vehicles_video(args.video,
         classifier=classifier,
         scaler=scaler,
-        tracker = tracker,
+        tracker = Tracker(track_frame_number=5, heatmap_threshold=8),
         mining=False,
-        decision=2.375,
-        view=True)
+        decision=2.175,
+        view=False,
+        show=False)
 

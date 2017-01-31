@@ -8,15 +8,22 @@ from pyimagesearch.nms import non_max_suppression_slow
 
 IMG_WIDTH=1280
 IMG_HEIGTH=720
-KEEP_N_FRAMES = 5
+TRACK_N_FRAMES = 5
+HEATMAP_THRESHOLD = 8
 
 class Tracker:
 
-    def __init__(self):
+    def __init__(self,
+                 track_frame_number=TRACK_N_FRAMES,
+                 heatmap_threshold=HEATMAP_THRESHOLD):
         """
-        Init
+        Frame tracking class init.
+        :param track_frame_number: Speicify how many frame to track
+        :param heatmap_threshold: Speicify threshold for the heatmap
         """
-        self.frames = deque(maxlen=KEEP_N_FRAMES)
+        self.heatmap_threshold=heatmap_threshold
+        self.track_frame_number=track_frame_number
+        self.frames = deque(maxlen=track_frame_number)
 
 
     def track_nms(self, windows, view=False):
@@ -47,16 +54,16 @@ class Tracker:
         """
         self.frames.append(windows)
         heatmap = np.zeros((IMG_HEIGTH, IMG_WIDTH), dtype=np.uint8)
-        #tracking_windows = windows
         tracking_windows = []
         for frame in self.frames:
             tracking_windows.extend(frame)
 
         Tracker.add_heat(heatmap, tracking_windows)
-        heatmap = Tracker.apply_threshold(heatmap, KEEP_N_FRAMES)
-        labels = Tracker.label_cars(heatmap)
+        heatmap_thres = Tracker.apply_threshold(heatmap, self.heatmap_threshold)
+        labels = Tracker.label_cars(heatmap_thres)
         if view:
             Tracker.show_image(heatmap, title='heatmap', cmap=plt.get_cmap('jet'))
+            Tracker.show_image(heatmap_thres, title='heatmap threshold', cmap=plt.get_cmap('jet'))
             Tracker.show_image(labels[0], title='labels', cmap=plt.get_cmap('gray'))
             #Tracker.show_image(track_img, title='trakced img', cmap=plt.get_cmap('gray'))
         #return track_img
@@ -75,9 +82,10 @@ class Tracker:
     ### source from class material
     def apply_threshold(heatmap, threshold):
         # Zero out pixels below ehe threshold
-        heatmap[heatmap <= threshold] = 0
+        heatmap_thres = np.copy(heatmap)
+        heatmap_thres[heatmap_thres <= threshold] = 0
         # Return thresholded map
-        return heatmap
+        return heatmap_thres
 
     ### source from class material
     def label_cars(heatmap):
