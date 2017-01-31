@@ -119,7 +119,8 @@ xy_windows = [ (100, 100), (120, 120), (140, 140), (180, 180)]
 
 Ultimately I searched on 4 scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
 
-![dec4.png][output/dec4.png]
+![dec4.png](output/dec4.png)
+
 ---
 
 ### Video Implementation
@@ -130,9 +131,9 @@ Here's a [project_vidwo_out.mp4](./project_video_out.mp4)
 
 ####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I use [track.py](trcak.py) to track positions of positive detections in 5 frames of the video. From the positive detections of 5 frames I created a heatmap and then thresholded that map to identify vehicle positions. I then used scipy.ndimage.measurements.label() to identify individual blobs in the heatmap. I then assumed each blob corresponded to a vehicle. I constructed bounding boxes to cover the area of each blob detected.
+I used [track.py](trcak.py) to track positions of positive detections in 5 frames of the video. From the positive detections of 5 frames I created a heatmap and then thresholded that map to identify vehicle positions. I applied threshold at 8 to remove false positives. I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap. I then assumed each blob corresponded to a vehicle. I constructed bounding boxes to cover the area of each blob detected.
 
-Here's an example result showing the heatmap from a frames of video, the result of scipy.ndimage.measurements.label() and the bounding boxes then overlaid on the last frame of video:
+Here's an example result showing the heatmap from a frame of video, the result of scipy.ndimage.measurements.label() and the bounding boxes then overlaid on the last frame of video:
 
 ![output/track_s1.png](output/track_s1.png)
 
@@ -144,11 +145,10 @@ Here's an example result showing the heatmap from a frames of video, the result 
 
 ![output/track_s5.png](output/track_s5.png)
 
-![output/track_s6.png](output/track_s6.png)
 
 Here's an example result showing the heatmap and bounding boxes overlaid on a frame of video:
 
-![alt text][image5]
+![output/track_s6.png](output/track_s6.png)
 
 ---
 
